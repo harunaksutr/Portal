@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anı Yükle — Anılar Buluta</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #faf7f2;
+  --warm: #f0e8d8;
+  --brown: #3d2c1e;
+  --brown-light: #7a5c44;
+  --accent: #c8702a;
+  --accent-soft: #e8a86a;
+  --green: #4a7c59;
+  --border: rgba(61,44,30,0.12);
+  --card: #ffffff;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--brown);
+  min-height: 100vh;
+}
+
+/* Decorative top bar */
+.top-deco {
+  height: 5px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-soft), var(--accent));
+}
+
+.page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* Event header */
+.event-header {
+  text-align: center;
+  margin-bottom: 36px;
+  animation: fadeUp 0.6s ease;
+}
+
+.event-emoji {
+  font-size: 4rem;
+  margin-bottom: 12px;
+  display: block;
+  animation: bounceIn 0.7s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes bounceIn {
+  from { transform: scale(0.5); opacity:0; }
+  to { transform: scale(1); opacity:1; }
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.event-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+.event-date {
+  font-size: 0.85rem;
+  color: var(--brown-light);
+  margin-bottom: 16px;
+}
+
+.guest-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--warm);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+  color: var(--brown-light);
+}
+
+/* Name form */
+.name-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 20px;
+  animation: fadeUp 0.6s 0.1s both ease;
+}
+
+.name-card-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--brown-light);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
+}
+
+.name-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.name-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: var(--brown);
+  background: var(--cream);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.name-input:focus { border-color: var(--accent); }
+
+/* Upload types */
+.upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+  animation: fadeUp 0.6s 0.2s both ease;
+}
+
+.upload-type-btn {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-type-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.upload-type-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+.upload-type-btn:hover::before { opacity: 0.04; }
+.upload-type-btn.active { border-color: var(--accent); background: rgba(200,112,42,0.05); }
+
+.upload-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.upload-label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  position: relative;
+  z-index: 1;
+}
+
+.upload-sub {
+  font-size: 0.72rem;
+  color: var(--brown-light);
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Upload areas */
+.upload-area {
+  background: var(--card);
+  border: 2px dashed var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  margin-bottom: 16px;
+  animation: fadeUp 0.5s ease;
+  display: none;
+}
+
+.upload-area.visible { display: block; }
+.upload-area.drag-over { border-color: var(--accent); background: rgba(200,112,42,0.04); }
+
+.upload-area:hover { border-color: var(--accent-soft); }
+
+.drop-icon { font-size: 3rem; margin-bottom: 12px; }
+.drop-title { font-family: 'DM Serif Display', serif; font-size: 1.1rem; margin-bottom: 6px; }
+.drop-sub { font-size: 0.82rem; color: var(--brown-light); }
+
+.file-input { display: none; }
+
+.btn-choose {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 10px 24px;
+  background: var(--accent);
+  color: white;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-choose:hover { background: #b05e20; }
+
+/* Message textarea */
+.message-area {
+  display: none;
+  margin-bottom: 16px;
+  animation: fadeUp 0.5s ease;
+}
+
+.message-area.visible { display: block; }
+
+.msg-textarea {
+  width: 100%;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: var(--brown);
+  resize: none;
+  min-height: 140px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.msg-textarea:focus { border-color: var(--accent); }
+.msg-textarea::placeholder { color: var(--brown-light); }
+
+/* Audio recorder */
+.audio-area {
+  display: none;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  text-align: center;
+  margin-bottom: 16px;
+  animation: fadeUp 0.5s ease;
+}
+
+.audio-area.visible { display: block; }
+
+.record-btn {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  cursor: pointer;
+  font-size: 1.8rem;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(200,112,42,0.35);
+}
+
+.record-btn:hover { transform: scale(1.07); }
+.record-btn.recording { background: #c0392b; animation: pulse 1s infinite; }
+
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(192,57,43,0.4); }
+  50% { box-shadow: 0 0 0 16px rgba(192,57,43,0); }
+}
+
+.record-time { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--brown); }
+.record-status { font-size: 0.8rem; color: var(--brown-light); margin-top: 6px; }
+
+/* Uploaded previews */
+.preview-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.preview-item {
+  position: relative;
+  width: 80px; height: 80px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+  background: var(--warm);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.preview-item img { width: 100%; height: 100%; object-fit: cover; }
+.preview-item .preview-icon { font-size: 2rem; }
+
+.preview-remove {
+  position: absolute;
+  top: 3px; right: 3px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 18px; height: 18px;
+  font-size: 0.65rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Submit */
+.submit-section {
+  animation: fadeUp 0.6s 0.3s both ease;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 16px;
+  background: var(--brown);
+  color: var(--cream);
+  border: none;
+  border-radius: 14px;
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-submit:hover { background: #2a1e14; transform: translateY(-1px); }
+.btn-submit:active { transform: translateY(0); }
+
+/* Gallery section */
+.gallery-section {
+  margin-top: 40px;
+  animation: fadeUp 0.6s 0.4s both ease;
+}
+
+.gallery-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  text-align: center;
+  color: var(--brown-light);
+}
+
+.guest-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.gallery-item {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  background: var(--warm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* Success state */
+.success-screen {
+  display: none;
+  text-align: center;
+  padding: 60px 20px;
+  animation: fadeUp 0.6s ease;
+}
+
+.success-screen.visible { display: block; }
+
+.success-emoji {
+  font-size: 5rem;
+  display: block;
+  margin-bottom: 20px;
+  animation: bounceIn 0.8s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.success-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.success-sub {
+  color: var(--brown-light);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+.btn-more {
+  padding: 12px 32px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: var(--brown);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-more:hover { border-color: var(--accent); color: var(--accent); }
+
+.main-form { }
+
+.char-count { text-align: right; font-size: 0.75rem; color: var(--brown-light); margin-top: 6px; }
+
+footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 0.75rem;
+  color: var(--brown-light);
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+
+footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="top-deco"></div>
+
+<div class="page">
+
+  <!-- SUCCESS SCREEN -->
+  <div class="success-screen" id="successScreen">
+    <span class="success-emoji">🎊</span>
+    <div class="success-title">Anın kaydedildi!</div>
+    <div class="success-sub">Paylaşımın için çok teşekkürler.<br>Bu an artık sonsuza kadar burada.</div>
+    <button class="btn-more" onclick="addMore()">+ Bir tane daha ekle</button>
+  </div>
+
+  <!-- MAIN FORM -->
+  <div class="main-form" id="mainForm">
+
+    <!-- Event header -->
+    <div class="event-header">
+      <span class="event-emoji" id="evEmoji">🎉</span>
+      <div class="event-name" id="evName">Etkinlik Yükleme</div>
+      <div class="event-date" id="evDate"></div>
+      <div class="guest-badge">📱 Misafir Yükleme Sayfası</div>
+    </div>
+
+    <!-- Name -->
+    <div class="name-card">
+      <div class="name-card-label">Adınız</div>
+      <div class="name-input-row">
+        <input type="text" class="name-input" id="guestName" placeholder="İsminizi yazın..." maxlength="50" />
+      </div>
+    </div>
+
+    <!-- Type selector -->
+    <div class="upload-grid">
+      <button class="upload-type-btn active" onclick="setType('photo',this)">
+        <div class="upload-icon">📷</div>
+        <div class="upload-label">Fotoğraf</div>
+        <div class="upload-sub">JPG, PNG, HEIC</div>
+      </button>
+      <button class="upload-type-btn" onclick="setType('video',this)">
+        <div class="upload-icon">🎬</div>
+        <div class="upload-label">Video</div>
+        <div class="upload-sub">MP4, MOV</div>
+      </button>
+      <button class="upload-type-btn" onclick="setType('audio',this)">
+        <div class="upload-icon">🎵</div>
+        <div class="upload-label">Ses Kaydı</div>
+        <div class="upload-sub">Mikrofon ile kaydet</div>
+      </button>
+      <button class="upload-type-btn" onclick="setType('message',this)">
+        <div class="upload-icon">💬</div>
+        <div class="upload-label">Mesaj</div>
+        <div class="upload-sub">Yazılı anı bırak</div>
+      </button>
+    </div>
+
+    <!-- Photo/Video area -->
+    <div class="upload-area visible" id="uploadArea"
+      ondragover="handleDrag(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+      <input type="file" class="file-input" id="fileInput" multiple accept="image/*,video/*"
+        onchange="handleFiles(this.files)" />
+      <div class="drop-icon" id="dropIcon">📷</div>
+      <div class="drop-title">Dosyaları buraya sürükle</div>
+      <div class="drop-sub">veya cihazından seç</div>
+      <button class="btn-choose" onclick="document.getElementById('fileInput').click()">Dosya Seç</button>
+    </div>
+
+    <!-- Audio area -->
+    <div class="audio-area" id="audioArea">
+      <div style="font-size:0.85rem;color:var(--brown-light);margin-bottom:20px;">Ses kaydı yapmak için butona bas</div>
+      <button class="record-btn" id="recordBtn" onclick="toggleRecord()">🎤</button>
+      <div class="record-time" id="recordTime">0:00</div>
+      <div class="record-status" id="recordStatus">Kayda başlamak için dokun</div>
+      <div id="audioPlayback" style="margin-top:16px;display:none;">
+        <audio id="audioPlayer" controls style="width:100%;border-radius:8px;"></audio>
+      </div>
+    </div>
+
+    <!-- Message area -->
+    <div class="message-area" id="msgArea">
+      <textarea class="msg-textarea" id="msgText" placeholder="Bu özel güne dair düşüncelerini, dileklerini veya anını yaz..." maxlength="1000"
+        oninput="updateCharCount()"></textarea>
+      <div class="char-count"><span id="charCount">0</span>/1000</div>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-grid" id="previewGrid"></div>
+
+    <!-- Submit -->
+    <div class="submit-section">
+      <button class="btn-submit" onclick="submitUpload()">
+        <span>☁</span> Anımı Yükle
+      </button>
+    </div>
+
+    <!-- Guest gallery (if public) -->
+    <div class="gallery-section" id="guestGallery" style="display:none">
+      <div class="gallery-title">Diğer misafirlerin yükledikleri</div>
+      <div class="guest-gallery" id="guestGalleryGrid"></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  Powered by <a href="index.html">Anılar Buluta</a> — Etkinlik Anı Platformu
+</footer>
+
+<script>
+// Get event from URL param
+const params = new URLSearchParams(location.search);
+const evId = params.get('event');
+
+let appData = JSON.parse(localStorage.getItem('ab_data') || '{}');
+let event = (appData.events || []).find(e=>e.id===evId);
+
+// Fallback demo
+if (!event) {
+  event = { id:'demo', name:'Etkinlik Anı Yükle', date:'', emoji:'🎉', privacy:'private', media:[] };
+}
+
+document.getElementById('evEmoji').textContent = event.emoji || '🎉';
+document.getElementById('evName').textContent = event.name || 'Etkinlik';
+if (event.date) {
+  document.getElementById('evDate').textContent = '📅 ' + new Date(event.date+'T12:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+}
+
+// Guest gallery
+if (event.privacy === 'guests' && event.media && event.media.length > 0) {
+  document.getElementById('guestGallery').style.display = 'block';
+  const typeIcons = {photo:'📷',video:'🎬',audio:'🎵',message:'💬'};
+  document.getElementById('guestGalleryGrid').innerHTML = event.media.slice(0,9).map(m=>`
+    <div class="gallery-item">${typeIcons[m.type]||'📷'}</div>
+  `).join('');
+}
+
+// Type selection
+let currentType = 'photo';
+let uploadedFiles = [];
+let mediaRecorder = null;
+let recordingChunks = [];
+let recordingTimer = null;
+let recordingSeconds = 0;
+let audioBlob = null;
+
+function setType(type, btn) {
+  currentType = type;
+  document.querySelectorAll('.upload-type-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.getElementById('uploadArea').classList.remove('visible');
+  document.getElementById('audioArea').classList.remove('visible');
+  document.getElementById('msgArea').classList.remove('visible');
+
+  if (type === 'photo' || type === 'video') {
+    const input = document.getElementById('fileInput');
+    input.accept = type === 'photo' ? 'image/*' : 'video/*';
+    document.getElementById('dropIcon').textContent = type === 'photo' ? '📷' : '🎬';
+    document.getElementById('uploadArea').classList.add('visible');
+  } else if (type === 'audio') {
+    document.getElementById('audioArea').classList.add('visible');
+  } else if (type === 'message') {
+    document.getElementById('msgArea').classList.add('visible');
+  }
+  clearPreviews();
+}
+
+// File handling
+function handleDrag(e) { e.preventDefault(); document.getElementById('uploadArea').classList.add('drag-over'); }
+function handleDragLeave(e) { document.getElementById('uploadArea').classList.remove('drag-over'); }
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadArea').classList.remove('drag-over');
+  handleFiles(e.dataTransfer.files);
+}
+
+function handleFiles(files) {
+  uploadedFiles = [...files];
+  renderPreviews();
+}
+
+function renderPreviews() {
+  const grid = document.getElementById('previewGrid');
+  grid.innerHTML = uploadedFiles.map((f,i) => {
+    const isImg = f.type.startsWith('image');
+    const icon = isImg ? '' : '🎬';
+    return `<div class="preview-item" id="prev${i}">
+      ${isImg ? `<img src="${URL.createObjectURL(f)}" />` : `<span class="preview-icon">${icon}</span>`}
+      <button class="preview-remove" onclick="removeFile(${i})">×</button>
+    </div>`;
+  }).join('');
+}
+
+function removeFile(i) {
+  uploadedFiles.splice(i,1);
+  renderPreviews();
+}
+
+function clearPreviews() {
+  uploadedFiles = [];
+  document.getElementById('previewGrid').innerHTML = '';
+  document.getElementById('fileInput').value = '';
+}
+
+// Audio recording
+function toggleRecord() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    stopRecord();
+  } else {
+    startRecord();
+  }
+}
+
+function startRecord() {
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream => {
+    recordingChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => recordingChunks.push(e.data);
+    mediaRecorder.onstop = () => {
+      audioBlob = new Blob(recordingChunks, {type:'audio/webm'});
+      const url = URL.createObjectURL(audioBlob);
+      document.getElementById('audioPlayer').src = url;
+      document.getElementById('audioPlayback').style.display = 'block';
+      document.getElementById('recordStatus').textContent = 'Kayıt tamamlandı! Tekrar kaydetmek için bas.';
+      stream.getTracks().forEach(t=>t.stop());
+    };
+    mediaRecorder.start();
+    recordingSeconds = 0;
+    document.getElementById('recordBtn').classList.add('recording');
+    document.getElementById('recordBtn').textContent = '⏹';
+    document.getElementById('recordStatus').textContent = 'Kaydediliyor...';
+    recordingTimer = setInterval(() => {
+      recordingSeconds++;
+      const m = Math.floor(recordingSeconds/60);
+      const s = recordingSeconds % 60;
+      document.getElementById('recordTime').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    }, 1000);
+  }).catch(() => {
+    alert('Mikrofon erişimi gerekli!');
+  });
+}
+
+function stopRecord() {
+  if (mediaRecorder) mediaRecorder.stop();
+  clearInterval(recordingTimer);
+  document.getElementById('recordBtn').classList.remove('recording');
+  document.getElementById('recordBtn').textContent = '🎤';
+}
+
+// Message char count
+function updateCharCount() {
+  document.getElementById('charCount').textContent = document.getElementById('msgText').value.length;
+}
+
+// Submit
+function submitUpload() {
+  const name = document.getElementById('guestName').value.trim();
+  if (!name) { shakeInput('guestName'); return; }
+
+  if (currentType === 'message') {
+    const txt = document.getElementById('msgText').value.trim();
+    if (!txt) { shakeInput('msgText'); return; }
+  } else if ((currentType === 'photo' || currentType === 'video') && uploadedFiles.length === 0) {
+    shakeEl('uploadArea'); return;
+  } else if (currentType === 'audio' && !audioBlob) {
+    shakeEl('audioArea'); return;
+  }
+
+  // Save to local storage
+  let data = JSON.parse(localStorage.getItem('ab_data') || '{}');
+  const ev = (data.events||[]).find(e=>e.id===evId);
+
+  const newMedia = {
+    id: 'm'+Date.now(),
+    type: currentType,
+    author: name,
+    time: Date.now(),
+    thumb: null,
+    text: currentType==='message' ? document.getElementById('msgText').value.trim() : undefined
+  };
+
+  if (ev) {
+    ev.media.unshift(newMedia);
+    localStorage.setItem('ab_data', JSON.stringify(data));
+  }
+
+  // Show success
+  document.getElementById('mainForm').style.display = 'none';
+  document.getElementById('successScreen').classList.add('visible');
+}
+
+function shakeInput(id) {
+  const el = document.getElementById(id);
+  el.style.animation = 'none';
+  el.style.borderColor = '#c0392b';
+  el.focus();
+  setTimeout(() => el.style.borderColor = '', 1500);
+}
+
+function shakeEl(id) {
+  const el = document.getElementById(id);
+  el.style.borderColor = '#c0392b';
+  setTimeout(() => el.style.borderColor = '', 1500);
+}
+
+function addMore() {
+  document.getElementById('mainForm').style.display = '';
+  document.getElementById('successScreen').classList.remove('visible');
+  clearPreviews();
+  document.getElementById('msgText').value = '';
+  document.getElementById('charCount').textContent = '0';
+  audioBlob = null;
+  document.getElementById('audioPlayback').style.display = 'none';
+  document.getElementById('recordTime').textContent = '0:00';
+}
+</script>
+</body>
+</html>

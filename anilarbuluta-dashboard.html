@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anılar Buluta — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root {
+  --cream: #faf7f2;
+  --warm: #f0e8d8;
+  --brown: #3d2c1e;
+  --brown-light: #7a5c44;
+  --accent: #c8702a;
+  --accent-soft: #e8a86a;
+  --green: #4a7c59;
+  --red: #c0392b;
+  --card: #ffffff;
+  --shadow: rgba(61,44,30,0.08);
+  --border: rgba(61,44,30,0.1);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--brown);
+  min-height: 100vh;
+}
+
+/* Grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 150px;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 260px;
+  background: var(--brown);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
+
+.logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+
+.logo em { color: var(--accent-soft); font-style: italic; }
+
+.logo-sub {
+  font-size: 0.72rem;
+  color: rgba(250,247,242,0.4);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+
+.nav { display: flex; flex-direction: column; gap: 4px; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: rgba(250,247,242,0.55);
+  font-size: 0.9rem;
+  font-weight: 400;
+  transition: all 0.2s;
+  border: none;
+  background: none;
+  text-align: left;
+  width: 100%;
+}
+
+.nav-item:hover { background: rgba(255,255,255,0.07); color: var(--cream); }
+.nav-item.active { background: rgba(200,112,42,0.25); color: var(--accent-soft); }
+.nav-icon { font-size: 1.1rem; width: 20px; }
+
+.sidebar-footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 20px;
+}
+
+.sidebar-footer p {
+  font-size: 0.75rem;
+  color: rgba(250,247,242,0.3);
+  line-height: 1.6;
+}
+
+/* MAIN */
+.main-wrap {
+  margin-left: 260px;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.page-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6rem;
+}
+
+.topbar-actions { display: flex; gap: 12px; }
+
+.btn {
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--brown-light);
+}
+
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover { background: #b05e20; transform: translateY(-1px); }
+
+.btn-sm { padding: 7px 14px; font-size: 0.8rem; }
+.btn-danger { background: var(--red); color: white; }
+.btn-danger:hover { background: #a93226; }
+.btn-green { background: var(--green); color: white; }
+
+.content { padding: 36px 40px; }
+
+/* STATS ROW */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.stat-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.stat-icon.orange { background: rgba(200,112,42,0.12); }
+.stat-icon.green { background: rgba(74,124,89,0.12); }
+.stat-icon.blue { background: rgba(52,120,180,0.12); }
+.stat-icon.rose { background: rgba(180,52,100,0.12); }
+
+.stat-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.8rem;
+  color: var(--brown);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--brown-light);
+  margin-top: 4px;
+}
+
+/* SECTIONS */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.25rem;
+}
+
+/* EVENTS */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.event-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.25s;
+}
+
+.event-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px var(--shadow);
+}
+
+.event-card-top {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  position: relative;
+}
+
+.event-card-body { padding: 20px; }
+
+.event-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.event-date {
+  font-size: 0.78rem;
+  color: var(--brown-light);
+  margin-bottom: 14px;
+}
+
+.event-stats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.event-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.event-stat-num { font-weight: 500; font-size: 1rem; }
+.event-stat-label { font-size: 0.72rem; color: var(--brown-light); }
+
+.event-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.badge-green { background: rgba(74,124,89,0.12); color: var(--green); }
+.badge-orange { background: rgba(200,112,42,0.12); color: var(--accent); }
+
+/* MEDIA GRID */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.media-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.media-item:hover { transform: scale(1.02); box-shadow: 0 8px 24px var(--shadow); }
+
+.media-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  background: var(--warm);
+}
+
+.media-thumb-placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--warm);
+  font-size: 2rem;
+}
+
+.media-thumb-placeholder span {
+  font-size: 0.72rem;
+  color: var(--brown-light);
+}
+
+.media-info {
+  padding: 10px 12px;
+}
+
+.media-author {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--brown);
+}
+
+.media-time {
+  font-size: 0.7rem;
+  color: var(--brown-light);
+}
+
+.media-type-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  border-radius: 6px;
+  padding: 3px 7px;
+  font-size: 0.68rem;
+}
+
+/* QR MODAL */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(61,44,30,0.6);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes popIn {
+  from { opacity:0; transform: scale(0.85); }
+  to { opacity:1; transform: scale(1); }
+}
+
+.modal-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+}
+
+.modal-sub { font-size: 0.85rem; color: var(--brown-light); margin-bottom: 28px; }
+
+.qr-wrap {
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.qr-link {
+  background: var(--warm);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  color: var(--brown);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 10px;
+  word-break: break-all;
+}
+
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; }
+
+/* CREATE EVENT FORM */
+.form-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 28px;
+  display: none;
+}
+
+.form-panel.open { display: block; animation: slideDown 0.3s ease; }
+
+@keyframes slideDown {
+  from { opacity:0; transform: translateY(-10px); }
+  to { opacity:1; transform: translateY(0); }
+}
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1/-1; }
+
+.form-group label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--brown-light);
+  letter-spacing: 0.5px;
+}
+
+.form-group input, .form-group select {
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: var(--brown);
+  background: var(--cream);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus, .form-group select:focus {
+  border-color: var(--accent);
+}
+
+.emoji-picker {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.emoji-opt {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: var(--cream);
+  cursor: pointer;
+  font-size: 1.3rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+
+.emoji-opt.sel { border-color: var(--accent); background: rgba(200,112,42,0.08); }
+.emoji-opt:hover { border-color: var(--accent-soft); }
+
+.privacy-toggle {
+  display: flex;
+  gap: 10px;
+}
+
+.priv-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 9px;
+  border: 2px solid var(--border);
+  background: var(--cream);
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--brown-light);
+  font-family: 'DM Sans', sans-serif;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.priv-btn.sel {
+  border-color: var(--accent);
+  background: rgba(200,112,42,0.08);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* NOTIFICATION TOAST */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--brown);
+  color: var(--cream);
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 500;
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  max-width: 320px;
+}
+
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-icon { font-size: 1.2rem; }
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--warm);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 24px;
+  width: fit-content;
+}
+
+.tab {
+  padding: 8px 20px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  color: var(--brown-light);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab.active {
+  background: var(--card);
+  color: var(--brown);
+  font-weight: 500;
+  box-shadow: 0 1px 4px var(--shadow);
+}
+
+/* SETTINGS */
+.settings-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-row:last-child { border-bottom: none; }
+
+.settings-label { font-weight: 500; font-size: 0.9rem; }
+.settings-desc { font-size: 0.78rem; color: var(--brown-light); margin-top: 2px; }
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  width: 44px; height: 24px;
+  cursor: pointer;
+}
+
+.toggle input { opacity:0; width:0; height:0; }
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border);
+  border-radius: 50px;
+  transition: 0.3s;
+}
+
+.toggle input:checked + .toggle-slider { background: var(--accent); }
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  left: 3px; top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--brown-light);
+}
+
+.empty-state .big { font-size: 3.5rem; margin-bottom: 12px; }
+.empty-state p { font-size: 0.9rem; line-height: 1.7; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main-wrap { margin-left: 0; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .content { padding: 20px; }
+  .topbar { padding: 16px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">Anılar<em>Buluta</em></div>
+  <div class="logo-sub">Etkinlik Anı Platformu</div>
+
+  <nav class="nav">
+    <button class="nav-item active" onclick="showPage('dashboard')">
+      <span class="nav-icon">🏠</span> Dashboard
+    </button>
+    <button class="nav-item" onclick="showPage('events')">
+      <span class="nav-icon">🎉</span> Etkinliklerim
+    </button>
+    <button class="nav-item" onclick="showPage('gallery')">
+      <span class="nav-icon">🖼️</span> Medya Galerisi
+    </button>
+    <button class="nav-item" onclick="showPage('settings')">
+      <span class="nav-icon">⚙️</span> Ayarlar
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <p>Misafirleriniz QR kod ile anında yükleyebilir — hesap gerekmez.</p>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-wrap">
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">Dashboard</div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline" onclick="toggleCreateForm()">+ Yeni Etkinlik</button>
+      <button class="btn btn-primary" onclick="goGuest()">👁 Misafir Sayfası</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- CREATE FORM -->
+    <div class="form-panel" id="createForm">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:20px;">Yeni Etkinlik Oluştur</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Etkinlik Adı</label>
+          <input type="text" id="evName" placeholder="Düğün, Doğum Günü, Mezuniyet..." />
+        </div>
+        <div class="form-group">
+          <label>Tarih</label>
+          <input type="date" id="evDate" />
+        </div>
+        <div class="form-group full">
+          <label>Etkinlik İkonu</label>
+          <div class="emoji-picker" id="emojiPicker">
+            <div class="emoji-opt sel" onclick="selectEmoji(this,'💍')">💍</div>
+            <div class="emoji-opt" onclick="selectEmoji(this,'🎂')">🎂</div>
+            <div class="emoji-opt" onclick="selectEmoji(this,'🎓')">🎓</div>
+            <div class="emoji-opt" onclick="selectEmoji(this,'🥂')">🥂</div>
+            <div class="emoji-opt" onclick="selectEmoji(this,'🎉')">🎉</div>
+            <div class="emoji-opt" onclick="selectEmoji(this,'🌸')">🌸</div>
+            <div class="emoji-opt" onclick="selectEmoji(this,'🏠')">🏠</div>
+            <div class="emoji-opt" onclick="selectEmoji(this,'✈️')">✈️</div>
+          </div>
+        </div>
+        <div class="form-group full">
+          <label>Medya Gizliliği</label>
+          <div class="privacy-toggle">
+            <button class="priv-btn sel" onclick="selectPriv(this,'private')" id="privPrivate">🔒 Sadece Ben (Varsayılan)</button>
+            <button class="priv-btn" onclick="selectPriv(this,'guests')" id="privGuests">👥 Misafirler de Görebilir</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-outline" onclick="toggleCreateForm()">İptal</button>
+        <button class="btn btn-primary" onclick="createEvent()">Oluştur & QR Kod Al</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div id="page-dashboard">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon orange">🎉</div>
+          <div>
+            <div class="stat-num" id="st-events">0</div>
+            <div class="stat-label">Etkinlik</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">🖼️</div>
+          <div>
+            <div class="stat-num" id="st-media">0</div>
+            <div class="stat-label">Medya</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">💬</div>
+          <div>
+            <div class="stat-num" id="st-msgs">0</div>
+            <div class="stat-label">Mesaj</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon rose">👥</div>
+          <div>
+            <div class="stat-num" id="st-guests">0</div>
+            <div class="stat-label">Katılımcı</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">Etkinliklerim</div>
+      </div>
+      <div class="events-grid" id="dashboardEvents"></div>
+
+      <div class="section-header" style="margin-top:32px;">
+        <div class="section-title">Son Yüklenenler</div>
+        <button class="btn btn-outline btn-sm" onclick="showPage('gallery')">Tümünü Gör</button>
+      </div>
+      <div class="media-grid" id="recentMedia"></div>
+    </div>
+
+    <!-- EVENTS PAGE -->
+    <div id="page-events" style="display:none">
+      <div class="events-grid" id="eventsPageGrid"></div>
+    </div>
+
+    <!-- GALLERY PAGE -->
+    <div id="page-gallery" style="display:none">
+      <div class="tabs">
+        <button class="tab active" onclick="filterMedia('all',this)">Tümü</button>
+        <button class="tab" onclick="filterMedia('photo',this)">📷 Fotoğraflar</button>
+        <button class="tab" onclick="filterMedia('video',this)">🎬 Videolar</button>
+        <button class="tab" onclick="filterMedia('audio',this)">🎵 Ses</button>
+        <button class="tab" onclick="filterMedia('message',this)">💬 Mesajlar</button>
+      </div>
+      <div class="media-grid" id="galleryGrid"></div>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div id="page-settings" style="display:none">
+      <div class="settings-card">
+        <div style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:4px;">Varsayılan Gizlilik</div>
+        <div style="font-size:0.8rem;color:var(--brown-light);margin-bottom:16px;">Yeni etkinliklerde uygulanır</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Misafirler Medyaları Görebilir</div>
+            <div class="settings-desc">QR kod ile giren herkes yüklenen içerikleri görebilir</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="defaultPrivacy" onchange="saveSetting('defaultPrivacy',this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Bildirimler</div>
+            <div class="settings-desc">Yeni medya yüklendiğinde uyarı al</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="notifEnabled" checked onchange="saveSetting('notifEnabled',this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Orijinal Kalite Yükleme</div>
+            <div class="settings-desc">Sıkıştırma olmadan medya sakla (daha fazla depolama)</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="origQuality" checked onchange="saveSetting('origQuality',this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:16px;">Hesap</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Tüm Verileri Temizle</div>
+            <div class="settings-desc">Demo verilerini sıfırla</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="clearAll()">Temizle</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- QR MODAL -->
+<div class="modal-overlay" id="qrModal">
+  <div class="modal">
+    <div class="modal-title">QR Kodunuz Hazır! 🎉</div>
+    <div class="modal-sub" id="qrEventName">Misafirleriniz bu kodu okutarak anlarını yükleyebilir.</div>
+    <div class="qr-wrap">
+      <div id="qrcode"></div>
+    </div>
+    <div class="qr-link">
+      <span id="qrLinkText" style="flex:1;"></span>
+      <button class="btn btn-outline btn-sm" onclick="copyLink()">Kopyala</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeQR()">Kapat</button>
+      <button class="btn btn-primary" onclick="downloadQR()">⬇ İndir</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">📸</span>
+  <span id="toastMsg">Yeni medya yüklendi!</span>
+</div>
+
+<script>
+// --- STATE ---
+let data = JSON.parse(localStorage.getItem('ab_data') || 'null');
+
+if (!data) {
+  data = {
+    events: [
+      {
+        id: 'ev1',
+        name: 'Ayşe & Mehmet Düğünü',
+        date: '2025-06-14',
+        emoji: '💍',
+        privacy: 'private',
+        created: Date.now() - 86400000 * 10,
+        media: [
+          { id:'m1', type:'photo', author:'Zeynep K.', time: Date.now()-3600000*5, thumb: null },
+          { id:'m2', type:'video', author:'Ahmet Y.', time: Date.now()-3600000*3, thumb: null },
+          { id:'m3', type:'message', author:'Selin M.', time: Date.now()-3600000*1, thumb: null, text:'Çok güzel bir geceyi seninle paylaştık, ömür boyu mutlu olun! 💕' },
+          { id:'m4', type:'audio', author:'Can T.', time: Date.now()-7200000, thumb: null },
+          { id:'m5', type:'photo', author:'Nilüfer A.', time: Date.now()-900000, thumb: null },
+        ]
+      },
+      {
+        id: 'ev2',
+        name: '25. Yaş Doğum Günü',
+        date: '2025-08-03',
+        emoji: '🎂',
+        privacy: 'guests',
+        created: Date.now() - 86400000 * 3,
+        media: [
+          { id:'m6', type:'photo', author:'Mert B.', time: Date.now()-7200000*2, thumb: null },
+          { id:'m7', type:'message', author:'Elif S.', time: Date.now()-3600000, thumb: null, text:'Nice mutlu yıllara! Seninle büyümek ne güzel 🎉' },
+        ]
+      }
+    ],
+    settings: { defaultPrivacy: false, notifEnabled: true, origQuality: true }
+  };
+  saveData();
+}
+
+function saveData() { localStorage.setItem('ab_data', JSON.stringify(data)); }
+
+let selectedEmojiVal = '💍';
+let selectedPrivVal = 'private';
+let currentMediaFilter = 'all';
+let qrInstance = null;
+
+// --- RENDERING ---
+function renderAll() {
+  updateStats();
+  renderEvents('dashboardEvents', true);
+  renderEvents('eventsPageGrid', false);
+  renderMediaGrid('recentMedia', null, 'all', 6);
+  renderMediaGrid('galleryGrid', null, currentMediaFilter);
+}
+
+function updateStats() {
+  const allMedia = data.events.flatMap(e => e.media);
+  document.getElementById('st-events').textContent = data.events.length;
+  document.getElementById('st-media').textContent = allMedia.length;
+  document.getElementById('st-msgs').textContent = allMedia.filter(m=>m.type==='message').length;
+  const guests = new Set(allMedia.map(m=>m.author));
+  document.getElementById('st-guests').textContent = guests.size;
+}
+
+function renderEvents(containerId, limit) {
+  const container = document.getElementById(containerId);
+  const events = limit ? data.events.slice(0,4) : data.events;
+
+  if (events.length === 0) {
+    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="big">🎉</div>
+      <p>Henüz etkinlik yok.<br>"Yeni Etkinlik" butonuna tıkla!</p>
+    </div>`;
+    return;
+  }
+
+  const gradients = ['linear-gradient(135deg,#fde8d0,#f9c8a0)','linear-gradient(135deg,#d0e8f9,#a0c8f0)','linear-gradient(135deg,#d0f9e8,#a0f0c8)','linear-gradient(135deg,#f9d0e8,#f0a0c8)'];
+  container.innerHTML = events.map((ev,i) => `
+    <div class="event-card">
+      <div class="event-card-top" style="background:${gradients[i%gradients.length]}">${ev.emoji}</div>
+      <div class="event-card-body">
+        <div class="event-name">${ev.name}</div>
+        <div class="event-date">📅 ${new Date(ev.date+'T12:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})}</div>
+        <div class="event-stats">
+          <div class="event-stat">
+            <div class="event-stat-num">${ev.media.length}</div>
+            <div class="event-stat-label">Medya</div>
+          </div>
+          <div class="event-stat">
+            <div class="event-stat-num">${ev.media.filter(m=>m.type==='photo').length}</div>
+            <div class="event-stat-label">Fotoğraf</div>
+          </div>
+          <div class="event-stat">
+            <div class="event-stat-num">${new Set(ev.media.map(m=>m.author)).size}</div>
+            <div class="event-stat-label">Katılımcı</div>
+          </div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <span class="badge ${ev.privacy==='guests'?'badge-green':'badge-orange'}">
+            ${ev.privacy==='guests'?'👥 Herkese Açık':'🔒 Gizli'}
+          </span>
+        </div>
+        <div class="event-actions">
+          <button class="btn btn-outline btn-sm" onclick="showQR('${ev.id}')">📱 QR Kod</button>
+          <button class="btn btn-primary btn-sm" onclick="goGuest('${ev.id}')">Görüntüle</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteEvent('${ev.id}')">🗑</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+const typeConfig = {
+  photo:   { icon:'📷', label:'Fotoğraf', bg:'#f0e8d8' },
+  video:   { icon:'🎬', label:'Video',    bg:'#d8e8f0' },
+  audio:   { icon:'🎵', label:'Ses',      bg:'#d8f0e8' },
+  message: { icon:'💬', label:'Mesaj',    bg:'#f0d8e8' }
+};
+
+function renderMediaGrid(containerId, evId, filter, limit) {
+  const container = document.getElementById(containerId);
+  let allMedia = data.events.flatMap(ev => ev.media.map(m => ({...m, eventName:ev.name})));
+  if (evId) allMedia = allMedia.filter(m => m.eventId === evId);
+  if (filter && filter !== 'all') allMedia = allMedia.filter(m => m.type === filter);
+  allMedia.sort((a,b) => b.time - a.time);
+  if (limit) allMedia = allMedia.slice(0, limit);
+
+  if (allMedia.length === 0) {
+    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="big">🌅</div><p>Henüz medya yok.</p></div>`;
+    return;
+  }
+
+  container.innerHTML = allMedia.map(m => {
+    const cfg = typeConfig[m.type] || typeConfig.photo;
+    return `
+    <div class="media-item">
+      <div class="media-thumb-placeholder" style="background:${cfg.bg}">
+        <span style="font-size:2.2rem">${cfg.icon}</span>
+        ${m.type==='message' ? `<span style="font-size:0.65rem;padding:0 10px;text-align:center;color:#5a4030;max-height:3.5em;overflow:hidden;">${m.text||''}</span>` : `<span>${cfg.label}</span>`}
+      </div>
+      <span class="media-type-badge">${cfg.icon}</span>
+      <div class="media-info">
+        <div class="media-author">${m.author}</div>
+        <div class="media-time">${timeAgo(m.time)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function timeAgo(ts) {
+  const diff = Date.now() - ts;
+  if (diff < 60000) return 'Az önce';
+  if (diff < 3600000) return `${Math.floor(diff/60000)} dk önce`;
+  if (diff < 86400000) return `${Math.floor(diff/3600000)} sa önce`;
+  return `${Math.floor(diff/86400000)} gün önce`;
+}
+
+// --- NAVIGATION ---
+function showPage(name) {
+  ['dashboard','events','gallery','settings'].forEach(p => {
+    document.getElementById('page-'+p).style.display = p===name ? '' : 'none';
+  });
+  document.querySelectorAll('.nav-item').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim().toLowerCase().includes(
+      {dashboard:'dashboard',events:'etkinlik',gallery:'medya',settings:'ayar'}[name]||name
+    ));
+  });
+  const titles = {dashboard:'Dashboard',events:'Etkinliklerim',gallery:'Medya Galerisi',settings:'Ayarlar'};
+  document.getElementById('pageTitle').textContent = titles[name];
+  renderAll();
+}
+
+// --- FORM ---
+function toggleCreateForm() {
+  const f = document.getElementById('createForm');
+  f.classList.toggle('open');
+  if (f.classList.contains('open')) {
+    document.getElementById('evDate').valueAsDate = new Date();
+  }
+}
+
+function selectEmoji(el, val) {
+  document.querySelectorAll('.emoji-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedEmojiVal = val;
+}
+
+function selectPriv(el, val) {
+  document.querySelectorAll('.priv-btn').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedPrivVal = val;
+}
+
+function createEvent() {
+  const name = document.getElementById('evName').value.trim();
+  const date = document.getElementById('evDate').value;
+  if (!name) { toast('⚠️','Etkinlik adı girin!'); return; }
+
+  const ev = {
+    id: 'ev'+Date.now(),
+    name, date,
+    emoji: selectedEmojiVal,
+    privacy: selectedPrivVal,
+    created: Date.now(),
+    media: []
+  };
+  data.events.unshift(ev);
+  saveData();
+  toggleCreateForm();
+  document.getElementById('evName').value = '';
+  renderAll();
+  showQR(ev.id);
+  toast('🎉', `"${name}" etkinliği oluşturuldu!`);
+}
+
+function deleteEvent(id) {
+  if (!confirm('Bu etkinliği silmek istediğinize emin misiniz?')) return;
+  data.events = data.events.filter(e=>e.id!==id);
+  saveData();
+  renderAll();
+  toast('🗑️','Etkinlik silindi.');
+}
+
+// --- QR ---
+function showQR(evId) {
+  const ev = data.events.find(e=>e.id===evId);
+  if (!ev) return;
+
+  document.getElementById('qrEventName').textContent = `"${ev.name}" etkinliği için misafir yükleme linki`;
+  const link = window.location.origin + window.location.pathname.replace('index.html','') + `guest.html?event=${evId}`;
+  document.getElementById('qrLinkText').textContent = link;
+
+  document.getElementById('qrcode').innerHTML = '';
+  qrInstance = new QRCode(document.getElementById('qrcode'), {
+    text: link,
+    width: 200,
+    height: 200,
+    colorDark: '#3d2c1e',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  document.getElementById('qrModal').classList.add('open');
+}
+
+function closeQR() {
+  document.getElementById('qrModal').classList.remove('open');
+}
+
+function copyLink() {
+  const text = document.getElementById('qrLinkText').textContent;
+  navigator.clipboard.writeText(text).then(() => toast('📋','Link kopyalandı!'));
+}
+
+function downloadQR() {
+  const canvas = document.querySelector('#qrcode canvas');
+  if (!canvas) return;
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL();
+  a.download = 'qr-kod.png';
+  a.click();
+  toast('⬇️','QR kod indirildi!');
+}
+
+document.getElementById('qrModal').addEventListener('click', function(e) {
+  if (e.target === this) closeQR();
+});
+
+// --- GUEST REDIRECT ---
+function goGuest(evId) {
+  const id = evId || (data.events[0] && data.events[0].id) || '';
+  window.open(`guest.html?event=${id}`, '_blank');
+}
+
+// --- FILTER ---
+function filterMedia(f, btn) {
+  currentMediaFilter = f;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderMediaGrid('galleryGrid', null, f);
+}
+
+// --- SETTINGS ---
+function saveSetting(key, val) {
+  data.settings[key] = val;
+  saveData();
+  toast('✅','Ayar kaydedildi.');
+}
+
+function clearAll() {
+  if (!confirm('Tüm demo verileri temizlensin mi?')) return;
+  localStorage.removeItem('ab_data');
+  location.reload();
+}
+
+// --- TOAST ---
+function toast(icon, msg) {
+  const el = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastMsg').textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// --- SIMULATE NEW UPLOAD ---
+const names = ['Fatma B.','Ali R.','Deniz K.','Buse Y.','Emre A.'];
+const types = ['photo','photo','photo','video','audio','message'];
+const msgs = ['Harika bir an! 🙌','Asla unutmayacağım 💛','Çok güzeldi, teşekkürler!','Sizi seviyorum!'];
+
+function simulateUpload() {
+  if (data.events.length === 0) return;
+  const ev = data.events[Math.floor(Math.random()*data.events.length)];
+  const type = types[Math.floor(Math.random()*types.length)];
+  const author = names[Math.floor(Math.random()*names.length)];
+  ev.media.push({
+    id:'m'+Date.now(),
+    type,
+    author,
+    time: Date.now(),
+    thumb: null,
+    text: type==='message' ? msgs[Math.floor(Math.random()*msgs.length)] : undefined
+  });
+  saveData();
+  renderAll();
+  const icons = {photo:'📷',video:'🎬',audio:'🎵',message:'💬'};
+  toast(icons[type], `${author} yeni bir ${typeConfig[type].label.toLowerCase()} yükledi!`);
+}
+
+// Auto simulate upload every 18 seconds for demo
+setInterval(simulateUpload, 18000);
+
+// Load settings
+document.getElementById('defaultPrivacy').checked = data.settings.defaultPrivacy;
+document.getElementById('notifEnabled').checked = data.settings.notifEnabled;
+document.getElementById('origQuality').checked = data.settings.origQuality;
+
+// Initial render
+renderAll();
+</script>
+</body>
+</html>
