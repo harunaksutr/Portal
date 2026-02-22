@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anı Yükle — Anılar Buluta</title>
+<title>Anı Yükle — Gizem & Tolga</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -27,7 +27,6 @@ body {
   min-height: 100vh;
 }
 
-/* Decorative top bar */
 .top-deco {
   height: 5px;
   background: linear-gradient(90deg, var(--accent), var(--accent-soft), var(--accent));
@@ -39,7 +38,6 @@ body {
   padding: 40px 24px 80px;
 }
 
-/* Event header */
 .event-header {
   text-align: center;
   margin-bottom: 36px;
@@ -87,7 +85,6 @@ body {
   color: var(--brown-light);
 }
 
-/* Name form */
 .name-card {
   background: var(--card);
   border: 1.5px solid var(--border);
@@ -106,13 +103,8 @@ body {
   margin-bottom: 10px;
 }
 
-.name-input-row {
-  display: flex;
-  gap: 10px;
-}
-
 .name-input {
-  flex: 1;
+  width: 100%;
   padding: 12px 16px;
   border: 1.5px solid var(--border);
   border-radius: 10px;
@@ -126,7 +118,6 @@ body {
 
 .name-input:focus { border-color: var(--accent); }
 
-/* Upload types */
 .upload-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -143,46 +134,15 @@ body {
   cursor: pointer;
   text-align: center;
   transition: all 0.2s;
-  position: relative;
-  overflow: hidden;
-}
-
-.upload-type-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--accent);
-  opacity: 0;
-  transition: opacity 0.2s;
 }
 
 .upload-type-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
-.upload-type-btn:hover::before { opacity: 0.04; }
 .upload-type-btn.active { border-color: var(--accent); background: rgba(200,112,42,0.05); }
 
-.upload-icon {
-  font-size: 2rem;
-  margin-bottom: 8px;
-  position: relative;
-  z-index: 1;
-}
+.upload-icon { font-size: 2rem; margin-bottom: 8px; }
+.upload-label { font-weight: 500; font-size: 0.9rem; }
+.upload-sub { font-size: 0.72rem; color: var(--brown-light); margin-top: 4px; }
 
-.upload-label {
-  font-weight: 500;
-  font-size: 0.9rem;
-  position: relative;
-  z-index: 1;
-}
-
-.upload-sub {
-  font-size: 0.72rem;
-  color: var(--brown-light);
-  margin-top: 4px;
-  position: relative;
-  z-index: 1;
-}
-
-/* Upload areas */
 .upload-area {
   background: var(--card);
   border: 2px dashed var(--border);
@@ -192,13 +152,11 @@ body {
   cursor: pointer;
   transition: all 0.25s;
   margin-bottom: 16px;
-  animation: fadeUp 0.5s ease;
   display: none;
 }
 
 .upload-area.visible { display: block; }
 .upload-area.drag-over { border-color: var(--accent); background: rgba(200,112,42,0.04); }
-
 .upload-area:hover { border-color: var(--accent-soft); }
 
 .drop-icon { font-size: 3rem; margin-bottom: 12px; }
@@ -224,13 +182,7 @@ body {
 
 .btn-choose:hover { background: #b05e20; }
 
-/* Message textarea */
-.message-area {
-  display: none;
-  margin-bottom: 16px;
-  animation: fadeUp 0.5s ease;
-}
-
+.message-area { display: none; margin-bottom: 16px; }
 .message-area.visible { display: block; }
 
 .msg-textarea {
@@ -251,7 +203,6 @@ body {
 .msg-textarea:focus { border-color: var(--accent); }
 .msg-textarea::placeholder { color: var(--brown-light); }
 
-/* Audio recorder */
 .audio-area {
   display: none;
   background: var(--card);
@@ -260,7 +211,6 @@ body {
   padding: 32px;
   text-align: center;
   margin-bottom: 16px;
-  animation: fadeUp 0.5s ease;
 }
 
 .audio-area.visible { display: block; }
@@ -289,13 +239,7 @@ body {
 .record-time { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--brown); }
 .record-status { font-size: 0.8rem; color: var(--brown-light); margin-top: 6px; }
 
-/* Uploaded previews */
-.preview-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 16px;
-}
+.preview-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
 
 .preview-item {
   position: relative;
@@ -323,10 +267,7 @@ body {
   display: flex; align-items: center; justify-content: center;
 }
 
-/* Submit */
-.submit-section {
-  animation: fadeUp 0.6s 0.3s both ease;
-}
+.submit-section { animation: fadeUp 0.6s 0.3s both ease; }
 
 .btn-submit {
   width: 100%;
@@ -346,39 +287,25 @@ body {
 }
 
 .btn-submit:hover { background: #2a1e14; transform: translateY(-1px); }
-.btn-submit:active { transform: translateY(0); }
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-/* Gallery section */
-.gallery-section {
-  margin-top: 40px;
-  animation: fadeUp 0.6s 0.4s both ease;
-}
-
-.gallery-title {
-  font-family: 'DM Serif Display', serif;
-  font-size: 1.2rem;
-  margin-bottom: 16px;
-  text-align: center;
-  color: var(--brown-light);
-}
-
-.guest-gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.gallery-item {
-  aspect-ratio: 1;
-  border-radius: 12px;
+.progress-bar {
+  width: 100%;
+  height: 4px;
   background: var(--warm);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.8rem;
-  border: 1px solid var(--border);
-  overflow: hidden;
+  border-radius: 4px;
+  margin-top: 12px;
+  display: none;
 }
 
-/* Success state */
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width 0.3s;
+  width: 0%;
+}
+
 .success-screen {
   display: none;
   text-align: center;
@@ -422,8 +349,6 @@ body {
 
 .btn-more:hover { border-color: var(--accent); color: var(--accent); }
 
-.main-form { }
-
 .char-count { text-align: right; font-size: 0.75rem; color: var(--brown-light); margin-top: 6px; }
 
 footer {
@@ -435,7 +360,16 @@ footer {
   margin-top: 40px;
 }
 
-footer a { color: var(--accent); text-decoration: none; }
+.error-msg {
+  background: #fff0f0;
+  border: 1px solid #ffcccc;
+  color: #c0392b;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  display: none;
+}
 </style>
 </head>
 <body>
@@ -448,30 +382,25 @@ footer a { color: var(--accent); text-decoration: none; }
   <div class="success-screen" id="successScreen">
     <span class="success-emoji">🎊</span>
     <div class="success-title">Anın kaydedildi!</div>
-    <div class="success-sub">Paylaşımın için çok teşekkürler.<br>Bu an artık sonsuza kadar burada.</div>
+    <div class="success-sub">Paylaşımın için çok teşekkürler.<br>Bu an artık sonsuza kadar burada. 💕</div>
     <button class="btn-more" onclick="addMore()">+ Bir tane daha ekle</button>
   </div>
 
   <!-- MAIN FORM -->
   <div class="main-form" id="mainForm">
 
-    <!-- Event header -->
     <div class="event-header">
-      <span class="event-emoji" id="evEmoji">🎉</span>
-      <div class="event-name" id="evName">Etkinlik Yükleme</div>
-      <div class="event-date" id="evDate"></div>
-      <div class="guest-badge">📱 Misafir Yükleme Sayfası</div>
+      <span class="event-emoji">💍</span>
+      <div class="event-name">Gizem & Tolga</div>
+      <div class="event-date">📅 16 Mayıs 2026</div>
+      <div class="guest-badge">📱 Misafir Anı Yükleme</div>
     </div>
 
-    <!-- Name -->
     <div class="name-card">
       <div class="name-card-label">Adınız</div>
-      <div class="name-input-row">
-        <input type="text" class="name-input" id="guestName" placeholder="İsminizi yazın..." maxlength="50" />
-      </div>
+      <input type="text" class="name-input" id="guestName" placeholder="İsminizi yazın..." maxlength="50" />
     </div>
 
-    <!-- Type selector -->
     <div class="upload-grid">
       <button class="upload-type-btn active" onclick="setType('photo',this)">
         <div class="upload-icon">📷</div>
@@ -495,7 +424,6 @@ footer a { color: var(--accent); text-decoration: none; }
       </button>
     </div>
 
-    <!-- Photo/Video area -->
     <div class="upload-area visible" id="uploadArea"
       ondragover="handleDrag(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
       <input type="file" class="file-input" id="fileInput" multiple accept="image/*,video/*"
@@ -506,7 +434,6 @@ footer a { color: var(--accent); text-decoration: none; }
       <button class="btn-choose" onclick="document.getElementById('fileInput').click()">Dosya Seç</button>
     </div>
 
-    <!-- Audio area -->
     <div class="audio-area" id="audioArea">
       <div style="font-size:0.85rem;color:var(--brown-light);margin-bottom:20px;">Ses kaydı yapmak için butona bas</div>
       <button class="record-btn" id="recordBtn" onclick="toggleRecord()">🎤</button>
@@ -517,65 +444,32 @@ footer a { color: var(--accent); text-decoration: none; }
       </div>
     </div>
 
-    <!-- Message area -->
     <div class="message-area" id="msgArea">
-      <textarea class="msg-textarea" id="msgText" placeholder="Bu özel güne dair düşüncelerini, dileklerini veya anını yaz..." maxlength="1000"
+      <textarea class="msg-textarea" id="msgText" placeholder="Gizem & Tolga için dileklerini, anılarını yaz..." maxlength="1000"
         oninput="updateCharCount()"></textarea>
       <div class="char-count"><span id="charCount">0</span>/1000</div>
     </div>
 
-    <!-- Preview -->
     <div class="preview-grid" id="previewGrid"></div>
 
-    <!-- Submit -->
     <div class="submit-section">
-      <button class="btn-submit" onclick="submitUpload()">
-        <span>☁</span> Anımı Yükle
+      <button class="btn-submit" id="submitBtn" onclick="submitUpload()">
+        <span>💍</span> Anımı Paylaş
       </button>
-    </div>
-
-    <!-- Guest gallery (if public) -->
-    <div class="gallery-section" id="guestGallery" style="display:none">
-      <div class="gallery-title">Diğer misafirlerin yükledikleri</div>
-      <div class="guest-gallery" id="guestGalleryGrid"></div>
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="error-msg" id="errorMsg"></div>
     </div>
 
   </div>
 </div>
 
 <footer>
-  Powered by <a href="index.html">Anılar Buluta</a> — Etkinlik Anı Platformu
+  Gizem & Tolga Düğünü — 16 Mayıs 2026 🤍
 </footer>
 
 <script>
-// Get event from URL param
-const params = new URLSearchParams(location.search);
-const evId = params.get('event');
-
-let appData = JSON.parse(localStorage.getItem('ab_data') || '{}');
-let event = (appData.events || []).find(e=>e.id===evId);
-
-// Fallback demo
-if (!event) {
-  event = { id:'demo', name:'Etkinlik Anı Yükle', date:'', emoji:'🎉', privacy:'private', media:[] };
-}
-
-document.getElementById('evEmoji').textContent = event.emoji || '🎉';
-document.getElementById('evName').textContent = event.name || 'Etkinlik';
-if (event.date) {
-  document.getElementById('evDate').textContent = '📅 ' + new Date(event.date+'T12:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
-}
-
-// Guest gallery
-if (event.privacy === 'guests' && event.media && event.media.length > 0) {
-  document.getElementById('guestGallery').style.display = 'block';
-  const typeIcons = {photo:'📷',video:'🎬',audio:'🎵',message:'💬'};
-  document.getElementById('guestGalleryGrid').innerHTML = event.media.slice(0,9).map(m=>`
-    <div class="gallery-item">${typeIcons[m.type]||'📷'}</div>
-  `).join('');
-}
-
-// Type selection
 let currentType = 'photo';
 let uploadedFiles = [];
 let mediaRecorder = null;
@@ -606,7 +500,6 @@ function setType(type, btn) {
   clearPreviews();
 }
 
-// File handling
 function handleDrag(e) { e.preventDefault(); document.getElementById('uploadArea').classList.add('drag-over'); }
 function handleDragLeave(e) { document.getElementById('uploadArea').classList.remove('drag-over'); }
 function handleDrop(e) {
@@ -624,18 +517,14 @@ function renderPreviews() {
   const grid = document.getElementById('previewGrid');
   grid.innerHTML = uploadedFiles.map((f,i) => {
     const isImg = f.type.startsWith('image');
-    const icon = isImg ? '' : '🎬';
-    return `<div class="preview-item" id="prev${i}">
-      ${isImg ? `<img src="${URL.createObjectURL(f)}" />` : `<span class="preview-icon">${icon}</span>`}
+    return `<div class="preview-item">
+      ${isImg ? `<img src="${URL.createObjectURL(f)}" />` : `<span class="preview-icon">🎬</span>`}
       <button class="preview-remove" onclick="removeFile(${i})">×</button>
     </div>`;
   }).join('');
 }
 
-function removeFile(i) {
-  uploadedFiles.splice(i,1);
-  renderPreviews();
-}
+function removeFile(i) { uploadedFiles.splice(i,1); renderPreviews(); }
 
 function clearPreviews() {
   uploadedFiles = [];
@@ -643,13 +532,9 @@ function clearPreviews() {
   document.getElementById('fileInput').value = '';
 }
 
-// Audio recording
 function toggleRecord() {
-  if (mediaRecorder && mediaRecorder.state === 'recording') {
-    stopRecord();
-  } else {
-    startRecord();
-  }
+  if (mediaRecorder && mediaRecorder.state === 'recording') stopRecord();
+  else startRecord();
 }
 
 function startRecord() {
@@ -659,10 +544,9 @@ function startRecord() {
     mediaRecorder.ondataavailable = e => recordingChunks.push(e.data);
     mediaRecorder.onstop = () => {
       audioBlob = new Blob(recordingChunks, {type:'audio/webm'});
-      const url = URL.createObjectURL(audioBlob);
-      document.getElementById('audioPlayer').src = url;
+      document.getElementById('audioPlayer').src = URL.createObjectURL(audioBlob);
       document.getElementById('audioPlayback').style.display = 'block';
-      document.getElementById('recordStatus').textContent = 'Kayıt tamamlandı! Tekrar kaydetmek için bas.';
+      document.getElementById('recordStatus').textContent = 'Kayıt tamamlandı!';
       stream.getTracks().forEach(t=>t.stop());
     };
     mediaRecorder.start();
@@ -676,9 +560,7 @@ function startRecord() {
       const s = recordingSeconds % 60;
       document.getElementById('recordTime').textContent = `${m}:${s.toString().padStart(2,'0')}`;
     }, 1000);
-  }).catch(() => {
-    alert('Mikrofon erişimi gerekli!');
-  });
+  }).catch(() => alert('Mikrofon erişimi gerekli!'));
 }
 
 function stopRecord() {
@@ -688,60 +570,85 @@ function stopRecord() {
   document.getElementById('recordBtn').textContent = '🎤';
 }
 
-// Message char count
 function updateCharCount() {
   document.getElementById('charCount').textContent = document.getElementById('msgText').value.length;
 }
 
-// Submit
-function submitUpload() {
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
+async function submitUpload() {
   const name = document.getElementById('guestName').value.trim();
-  if (!name) { shakeInput('guestName'); return; }
-
-  if (currentType === 'message') {
-    const txt = document.getElementById('msgText').value.trim();
-    if (!txt) { shakeInput('msgText'); return; }
-  } else if ((currentType === 'photo' || currentType === 'video') && uploadedFiles.length === 0) {
-    shakeEl('uploadArea'); return;
-  } else if (currentType === 'audio' && !audioBlob) {
-    shakeEl('audioArea'); return;
+  if (!name) {
+    document.getElementById('guestName').style.borderColor = '#c0392b';
+    document.getElementById('guestName').focus();
+    setTimeout(() => document.getElementById('guestName').style.borderColor = '', 1500);
+    return;
   }
 
-  // Save to local storage
-  let data = JSON.parse(localStorage.getItem('ab_data') || '{}');
-  const ev = (data.events||[]).find(e=>e.id===evId);
+  const btn = document.getElementById('submitBtn');
+  const progressBar = document.getElementById('progressBar');
+  const progressFill = document.getElementById('progressFill');
 
-  const newMedia = {
-    id: 'm'+Date.now(),
-    type: currentType,
-    author: name,
-    time: Date.now(),
-    thumb: null,
-    text: currentType==='message' ? document.getElementById('msgText').value.trim() : undefined
-  };
+  try {
+    btn.disabled = true;
+    progressBar.style.display = 'block';
+    progressFill.style.width = '20%';
 
-  if (ev) {
-    ev.media.unshift(newMedia);
-    localStorage.setItem('ab_data', JSON.stringify(data));
+    if (currentType === 'message') {
+      const txt = document.getElementById('msgText').value.trim();
+      if (!txt) { showError('Lütfen bir mesaj yazın.'); btn.disabled = false; progressBar.style.display = 'none'; return; }
+
+      progressFill.style.width = '60%';
+      const res = await fetch('/api/message', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ author: name, message: txt })
+      });
+      if (!res.ok) throw new Error('Yükleme başarısız');
+
+    } else if (currentType === 'audio') {
+      if (!audioBlob) { showError('Lütfen ses kaydı yapın.'); btn.disabled = false; progressBar.style.display = 'none'; return; }
+
+      const formData = new FormData();
+      formData.append('author', name);
+      formData.append('type', 'audio');
+      formData.append('files', audioBlob, 'ses-kaydi.webm');
+
+      progressFill.style.width = '60%';
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      if (!res.ok) throw new Error('Yükleme başarısız');
+
+    } else {
+      if (uploadedFiles.length === 0) { showError('Lütfen en az bir dosya seçin.'); btn.disabled = false; progressBar.style.display = 'none'; return; }
+
+      const formData = new FormData();
+      formData.append('author', name);
+      formData.append('type', currentType);
+      uploadedFiles.forEach(f => formData.append('files', f));
+
+      progressFill.style.width = '60%';
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      if (!res.ok) throw new Error('Yükleme başarısız');
+    }
+
+    progressFill.style.width = '100%';
+    setTimeout(() => {
+      document.getElementById('mainForm').style.display = 'none';
+      document.getElementById('successScreen').classList.add('visible');
+      progressBar.style.display = 'none';
+      btn.disabled = false;
+    }, 400);
+
+  } catch (err) {
+    showError('Bir hata oluştu. Lütfen tekrar deneyin.');
+    btn.disabled = false;
+    progressBar.style.display = 'none';
   }
-
-  // Show success
-  document.getElementById('mainForm').style.display = 'none';
-  document.getElementById('successScreen').classList.add('visible');
-}
-
-function shakeInput(id) {
-  const el = document.getElementById(id);
-  el.style.animation = 'none';
-  el.style.borderColor = '#c0392b';
-  el.focus();
-  setTimeout(() => el.style.borderColor = '', 1500);
-}
-
-function shakeEl(id) {
-  const el = document.getElementById(id);
-  el.style.borderColor = '#c0392b';
-  setTimeout(() => el.style.borderColor = '', 1500);
 }
 
 function addMore() {
