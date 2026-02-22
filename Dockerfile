@@ -8,7 +8,7 @@ RUN npm install --production
 COPY server.js ./
 RUN mkdir -p /app/public
 
-COPY *.html /app/public/
+COPY public/ /app/public/
 
 EXPOSE 3000
 
